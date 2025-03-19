@@ -75,6 +75,33 @@ A full-stack MERN application for managing tasks and agents with user authentica
    npm start
    ```
 
+## Environment Setup
+
+### Backend Environment Variables
+Create a `.env` file in the backend directory with the following variables:
+```
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+PORT=4001
+```
+
+### Frontend Environment Variables
+Create a `.env` file in the frontend directory with the following variables:
+```
+VITE_API_URL=http://localhost:4001/api
+```
+
+## Version Control
+
+The project includes `.gitignore` files in both frontend and backend directories to exclude:
+- Environment files (`.env`)
+- Dependencies (`node_modules`)
+- Build artifacts
+- IDE-specific files
+- OS-generated files
+- Log files
+- Uploaded files
+
 ## API Endpoints
 
 ### Authentication
