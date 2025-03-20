@@ -85,34 +85,113 @@ A full-stack MERN (MongoDB, Express.js, React.js, Node.js) application for manag
 
 ## Environment Variables
 
-### Backend (.env)
+### Backend
+Create two environment files: `.env` for development and `.env.production` for production.
+
+#### Development (.env)
 ```
+# Server Configuration
 NODE_ENV=development
-PORT=5000
+PORT=4001
+
+# MongoDB Configuration
 MONGODB_URI=your_mongodb_uri
+
+# JWT Configuration
 JWT_SECRET=your_jwt_secret
-FRONTEND_URL=http://localhost:3000
+JWT_EXPIRES_IN=7d
+
+# CORS Configuration
+CORS_ORIGIN=http://localhost:5173
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000  # 15 minutes
+RATE_LIMIT_MAX_REQUESTS=100
+
+# File Upload Configuration
+MAX_FILE_SIZE=10485760  # 10MB in bytes
+ALLOWED_FILE_TYPES=csv,xlsx,xls
 ```
 
-### Frontend (.env)
+#### Production (.env.production)
 ```
-VITE_API_URL=http://localhost:5000/api
+# Server Configuration
+NODE_ENV=production
+PORT=4001
+
+# MongoDB Configuration
+MONGODB_URI=your_production_mongodb_uri
+
+# JWT Configuration
+JWT_SECRET=your_production_jwt_secret
+JWT_EXPIRES_IN=7d
+
+# CORS Configuration
+CORS_ORIGIN=https://your-frontend-domain.com
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+
+# File Upload Configuration
+MAX_FILE_SIZE=10485760
+ALLOWED_FILE_TYPES=csv,xlsx,xls
+```
+
+### Frontend
+Create two environment files: `.env` for development and `.env.production` for production.
+
+#### Development (.env)
+```
+VITE_API_URL=http://localhost:4001/api
+```
+
+#### Production (.env.production)
+```
+VITE_API_URL=https://your-backend-domain.com/api
+VITE_APP_NAME=Task Management System
+VITE_APP_VERSION=1.0.0
 ```
 
 ## Deployment
 
-1. **Backend Deployment**
-   ```bash
-   cd backend
-   npm run build
-   npm start
-   ```
+### Backend Deployment (on Render)
 
-2. **Frontend Deployment**
-   ```bash
-   cd frontend
-   npm run build
-   ```
+1. Create a new Web Service on Render
+2. Connect your GitHub repository
+3. Configure the following:
+   - Build Command: `npm install`
+   - Start Command: `npm start`
+   - Environment Variables: Copy from `.env.production`
+4. Deploy the service
+
+### Frontend Deployment (on Render/Vercel)
+
+1. Create a new Web Service/Static Site
+2. Connect your GitHub repository
+3. Configure the build settings:
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+   - Environment Variables: Copy from `.env.production`
+4. Deploy the service
+
+### Important Deployment Notes
+
+1. **Environment Variables**: 
+   - Ensure all environment variables are properly set in your deployment platform
+   - Update `CORS_ORIGIN` in backend to match your frontend domain
+   - Update `VITE_API_URL` in frontend to match your backend domain
+
+2. **MongoDB Atlas**:
+   - Ensure your IP whitelist includes your deployment platform's IPs
+   - Use a strong password and keep it secure
+   - Configure network access appropriately
+
+3. **Security**:
+   - Use strong JWT secrets in production
+   - Enable HTTPS
+   - Set up proper CORS configuration
+   - Configure rate limiting according to your needs
 
 ## API Documentation
 
