@@ -1,16 +1,35 @@
 # Task Management System
 
-A full-stack MERN application for managing tasks and agents with user authentication.
+A full-stack MERN (MongoDB, Express.js, React.js, Node.js) application for managing and distributing tasks among agents. The system provides a secure, user-friendly interface for task management with features like user authentication, task distribution, and real-time statistics.
 
 ## Features
 
-- User Authentication (Admin-only)
-- Agent Management
-- Task Management
-- CSV File Upload for Tasks
-- Real-time Task Status Updates
-- Responsive Dashboard
-- User-specific Data Isolation
+- **User Authentication**
+  - Secure login and signup system
+  - JWT-based authentication
+  - Protected routes and API endpoints
+
+- **Agent Management**
+  - Create, update, and delete agents
+  - View agent workload statistics
+  - Active/Inactive agent status
+
+- **Task Management**
+  - Upload tasks via CSV/Excel files
+  - Automatic task distribution among agents
+  - Task status tracking (pending, in-progress, completed, failed)
+  - Task reassignment capabilities
+
+- **Dashboard**
+  - Real-time statistics
+  - Task distribution visualization
+  - Agent performance metrics
+
+- **Security Features**
+  - Rate limiting
+  - Request compression
+  - Security headers (Helmet)
+  - CORS protection
 
 ## Tech Stack
 
@@ -20,149 +39,98 @@ A full-stack MERN application for managing tasks and agents with user authentica
 - MongoDB with Mongoose
 - JWT Authentication
 - Multer for file uploads
+- Express Rate Limit
+- Helmet for security
+- Compression
 
 ### Frontend
 - React.js
-- Material-UI (MUI)
+- Material-UI
 - React Router
-- Axios for API calls
-- React Toastify for notifications
+- Axios
+- React Toastify
+- Chart.js
 
-## Setup Instructions
+## Prerequisites
 
-### Backend Setup
+- Node.js >= 14.0.0
+- MongoDB
+- npm or yarn
 
-1. Navigate to the backend directory:
+## Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd task-management-system
+   ```
+
+2. **Backend Setup**
    ```bash
    cd backend
-   ```
-
-2. Install dependencies:
-   ```bash
    npm install
+   cp .env.example .env
+   # Update .env with your configuration
+   npm run dev
    ```
 
-3. Create a `.env` file in the backend directory with the following variables:
-   ```
-   MONGODB_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret
-   PORT=4001
-   ```
-
-4. Start the backend server:
-   ```bash
-   npm start
-   ```
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
+3. **Frontend Setup**
    ```bash
    cd frontend
+   npm install
+   cp .env.example .env
+   # Update .env with your configuration
+   npm run dev
    ```
 
-2. Install dependencies:
-   ```bash
-   npm install @mui/material @emotion/react @emotion/styled  # For UI components
-   npm install axios                                        # For API calls
-   npm install react-router-dom                            # For routing
-   npm install @mui/icons-material                         # For icons
-   npm install react-toastify                              # For notifications
-   ```
+## Environment Variables
 
-3. Start the frontend development server:
+### Backend (.env)
+```
+NODE_ENV=development
+PORT=5000
+MONGODB_URI=your_mongodb_uri
+JWT_SECRET=your_jwt_secret
+FRONTEND_URL=http://localhost:3000
+```
+
+### Frontend (.env)
+```
+VITE_API_URL=http://localhost:5000/api
+```
+
+## Deployment
+
+1. **Backend Deployment**
    ```bash
+   cd backend
+   npm run build
    npm start
    ```
 
-## Environment Setup
+2. **Frontend Deployment**
+   ```bash
+   cd frontend
+   npm run build
+   ```
 
-### Backend Environment Variables
-Create a `.env` file in the backend directory with the following variables:
-```
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-PORT=4001
-```
+## API Documentation
 
-### Frontend Environment Variables
-Create a `.env` file in the frontend directory with the following variables:
-```
-VITE_API_URL=http://localhost:4001/api
-```
+### Authentication Endpoints
+- POST /api/auth/signup - Register a new user
+- POST /api/auth/login - Login user
 
-## Version Control
+### Agent Endpoints
+- GET /api/agents - Get all agents
+- POST /api/agents - Create new agent
+- PUT /api/agents/:id - Update agent
+- DELETE /api/agents/:id - Delete agent
 
-The project includes `.gitignore` files in both frontend and backend directories to exclude:
-- Environment files (`.env`)
-- Dependencies (`node_modules`)
-- Build artifacts
-- IDE-specific files
-- OS-generated files
-- Log files
-- Uploaded files
-
-## API Endpoints
-
-### Authentication
-- POST `/api/auth/signup` - Create new admin account
-- POST `/api/auth/login` - Admin login
-- POST `/api/auth/logout` - User logout
-
-### Agents
-- GET `/api/agents` - Get all agents for the current user
-- GET `/api/agents/:id` - Get agent by ID
-- POST `/api/agents` - Create new agent
-- PUT `/api/agents/:id` - Update agent
-- DELETE `/api/agents/:id` - Delete agent and redistribute tasks
-
-### Tasks
-- POST `/api/tasks/upload` - Upload and distribute tasks
-- GET `/api/tasks` - Get all tasks for the current user
-- GET `/api/tasks/agent/:agentId` - Get tasks by agent
-- PUT `/api/tasks/:taskId/status` - Update task status
-- DELETE `/api/tasks/:taskId` - Delete a task
-
-## CSV File Format
-
-The system accepts CSV files with the following columns:
-- FirstName (Text)
-- Phone (Number)
-- Notes (Text)
-
-Example:
-```csv
-FirstName,Phone,Notes
-John,1234567890,Follow up required
-Jane,9876543210,New lead
-```
-
-## Security Features
-
-- JWT-based authentication
-- Password hashing using bcrypt
-- Protected API routes
-- File type validation for uploads
-- Input validation and sanitization
-- User-specific data isolation
-
-## User Management
-
-The application implements a user-specific data isolation system where:
-- Each user can only see and manage their own agents and tasks
-- User authentication is required for all operations
-- Admin-only access is enforced through the `isAdmin` flag
-- User sessions are managed using JWT tokens
-
-## Error Handling
-
-The application includes comprehensive error handling for:
-- Invalid credentials
-- Duplicate entries
-- File upload errors
-- Database connection issues
-- Invalid requests
-- Authentication failures
+### Task Endpoints
+- POST /api/tasks/upload - Upload tasks
+- GET /api/tasks - Get all tasks
+- PUT /api/tasks/:id/status - Update task status
+- DELETE /api/tasks/:id - Delete task
 
 ## Contributing
 
@@ -174,4 +142,8 @@ The application includes comprehensive error handling for:
 
 ## License
 
-This project is licensed under the MIT License. 
+This project is licensed under the ISC License.
+
+## Support
+
+For support, email your-email@example.com or create an issue in the repository. 
