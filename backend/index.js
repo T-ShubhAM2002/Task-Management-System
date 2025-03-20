@@ -21,10 +21,13 @@ const __dirname = path.dirname(__filename);
 app.use(helmet()); // Add security headers
 app.use(compression()); // Compress responses
 
-// CORS configuration for production
+// CORS configuration
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin:
+      process.env.NODE_ENV === "production"
+        ? process.env.FRONTEND_URL
+        : ["http://localhost:5173", "http://localhost:3000"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -78,14 +81,13 @@ app.use((err, req, res, next) => {
 // Connect to MongoDB with enhanced options
 mongoose
   .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     maxPoolSize: 10,
     serverSelectionTimeoutMS: 5000,
     socketTimeoutMS: 45000,
   })
   .then(() => {
     console.log("Connected to MongoDB");
+    console.log("Database Name:", mongoose.connection.name);
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
@@ -93,6 +95,12 @@ mongoose
     });
   })
   .catch((error) => {
-    console.error("MongoDB connection error:", error);
+    console.error("MongoDB connection error details:", {
+      name: error.name,
+      message: error.message,
+      code: error.code,
+      codeName: error.codeName,
+    });
+    console.error("Check your MongoDB URI:", process.env.MONGODB_URI);
     process.exit(1); // Exit process with failure
   });
