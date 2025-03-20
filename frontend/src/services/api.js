@@ -73,6 +73,10 @@ export const agentService = {
     const response = await api.delete(`/agents/${id}`);
     return response.data;
   },
+  redistributeTasks: async () => {
+    const response = await api.post("/agents/redistribute");
+    return response.data;
+  },
 };
 
 // Task service

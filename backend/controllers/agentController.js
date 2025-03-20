@@ -40,7 +40,14 @@ export const createAgent = async (req, res) => {
     });
 
     await agent.save();
-    res.status(201).json({ message: "Agent created successfully", agent });
+
+    // After creating the agent, redistribute tasks
+    await redistributeTasksHelper(req.user.userId);
+
+    res.status(201).json({
+      message: "Agent created successfully and tasks redistributed",
+      agent,
+    });
   } catch (error) {
     console.error("Error in createAgent:", error);
     res.status(500).json({
@@ -160,5 +167,73 @@ export const deleteAgent = async (req, res) => {
       message: "Server error",
       error: error.message,
     });
+  }
+};
+
+// Function to redistribute tasks among all active agents
+export const redistributeTasks = async (req, res) => {
+  try {
+    await redistributeTasksHelper(req.user.userId);
+    res.status(200).json({
+      success: true,
+      message: "Tasks redistributed successfully",
+    });
+  } catch (error) {
+    console.error("Error in redistributeTasks:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to redistribute tasks",
+      error: error.message,
+    });
+  }
+};
+
+// Helper function to redistribute tasks
+const redistributeTasksHelper = async (userId) => {
+  try {
+    // Get all active agents
+    const agents = await Agent.find({ user: userId, isActive: true });
+
+    // Get all tasks
+    const tasks = await Task.find({ user: userId });
+
+    if (tasks.length === 0 || agents.length === 0) {
+      return;
+    }
+
+    // Calculate the ideal number of tasks per agent
+    const tasksPerAgent = Math.floor(tasks.length / agents.length);
+    const remainingTasks = tasks.length % agents.length;
+
+    // Clear existing task assignments
+    await Agent.updateMany({ user: userId }, { $set: { assignedTasks: [] } });
+
+    // Reset task assignments
+    await Task.updateMany({ user: userId }, { $unset: { assignedAgent: "" } });
+
+    // Redistribute tasks
+    for (let i = 0; i < tasks.length; i++) {
+      const agentIndex = Math.floor(
+        i / (tasksPerAgent + (i < remainingTasks ? 1 : 0))
+      );
+      const agent = agents[agentIndex];
+
+      // Update task with new agent
+      await Task.findByIdAndUpdate(tasks[i]._id, {
+        assignedAgent: agent._id,
+      });
+
+      // Update agent's assigned tasks
+      await Agent.findByIdAndUpdate(agent._id, {
+        $push: { assignedTasks: tasks[i]._id },
+      });
+    }
+
+    console.log(
+      `Tasks redistributed successfully among ${agents.length} agents`
+    );
+  } catch (error) {
+    console.error("Error in redistributeTasksHelper:", error);
+    throw error;
   }
 };

@@ -5,6 +5,7 @@ import {
   getAgentById,
   updateAgent,
   deleteAgent,
+  redistributeTasks,
 } from "../controllers/agentController.js";
 import auth from "../middleware/auth.js";
 
@@ -18,5 +19,6 @@ router.get("/", getAgents); // gets all agents
 router.get("/:id", getAgentById); // gets an agent by its ID
 router.put("/:id", updateAgent); // updates an agent by its ID
 router.delete("/:id", deleteAgent); // deletes an agent by its ID
+router.post("/redistribute", redistributeTasks);
 
 export default router;
